@@ -1,0 +1,63 @@
+---
+- name: "Add NGINX Signing Key"
+  apt_key:
+    url: http://nginx.org/packages/keys/nginx_signing.key
+    state: present
+  tags:
+    - setup
+
+- name: "Add NGINX Mainline Repository"
+  apt_repository:
+    repo: "{{item}}"
+  register: nginx_repository
+  with_items:
+    - deb http://nginx.org/packages/{{nginx_repository}}/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+    - deb-src http://nginx.org/packages/{{nginx_repository}}/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+  when: ( nginx_repository == "mainline")
+  tags:
+    - setup
+
+- name: "Add NGINX Stable Repository"
+  apt_repository:
+    repo: "{{item}}"
+  register: nginx_repository
+  with_items:
+    - deb http://nginx.org/packages/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+    - deb-src http://nginx.org/packages/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+  when: ( nginx_repository == "stable")
+  tags:
+    - setup
+
+- name: "Install NGINX package"
+  apt:
+    name: "{{ nginx_package }}"
+    state: latest
+    update_cache: true
+    cache_valid_time: 86400
+  notify: "start NGINX"
+  tags:
+    - setup
+
+- name: "Create nginx.conf"
+  template:
+    src: "{{ nginx_conf }}"
+    dest: "{{ nginx_path }}/nginx.conf"
+  notify: "reload NGINX"
+  tags:
+    - config
+
+- name: "Disable NGINX default server"
+  file:
+    path: "{{ nginx_path }}/conf.d/default.conf"
+    state: absent
+  notify: "reload NGINX"
+  tags:
+    - config
+
+- name: "Create Nginx sites config"
+  template:
+    src: "{{ nginx_site_conf }}"
+    dest: "{{ nginx_path }}/conf.d/{{ nginx_site_conf | basename | regex_replace('.j2$', '') }}"
+  notify: "reload NGINX"
+  tags:
+    - config

@@ -5,6 +5,14 @@
 name: zenbox
 image: ubuntu/xenial
 
+containers:
+  - name: web
+    hostnames:
+      - web.zenbox.dev
+
+provisioning:
+  - type: ansible
+    playbook: dev.yml
 # By default LXDock creates a single "default" container if you don't specify a "containers" option.
 # But you need the "containers" option if you have more than one container.
 

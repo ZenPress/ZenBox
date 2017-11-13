@@ -1,0 +1,15 @@
+---
+
+# NGINX installation
+nginx_repository: stable
+nginx_package: nginx
+nginx_path: /etc/nginx
+
+# NGINX templates
+nginx_conf: nginx.conf.j2
+nginx_site_conf: no-default.conf.j2
+
+# NGINX settings
+nginx_user: www-data
+nginx_group: "{{ nginx_user }}"
+nginx_worker_connections: 1024
