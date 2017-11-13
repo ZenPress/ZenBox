@@ -1,0 +1,31 @@
+---
+# defaults file for ansible-role-percona-server
+percona_version: "5.7"
+percona_root_password: percona
+
+# configuration
+percona_conf_path: /etc/mysql/percona-server.conf.d/mysqld.cnf
+percona_root_path: /root/.my.cnf
+
+# databases:
+percona_databases: []
+#percona_databases:
+#  - name: zen
+#    encoding: utf8
+
+# users:
+percona_users: []
+#percona_users:
+#  - name: zen
+#  password: zen
+#  host: localhost
+#  priv: "zen.*:ALL"
+
+# mysql
+percona_mysql_port: 3306
+percona_mysql_socket: /var/run/mysqld/mysqld.sock
+percona_mysql_pid: /var/run/mysqld/mysqld.pid
+percona_mysql_default_storage_engine: InnoDB
+percona_mysql_data_dir: /var/lib/mysql
+percona_mysql_innodb_buffer_pool_size: 128M
+percona_mysql_max_connections: 500

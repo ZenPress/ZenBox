@@ -1,5 +1,14 @@
 ---
 - hosts: web
+  vars:
+    percona_databases:
+      - name: zenbox
+        encoding: utf8
+    percona_users:
+      - name: zenbox
+        password: zenbox
+        priv: 'zenbox.*:ALL'
   roles:
     - { role: nginx, tags: ['setup', 'config'] }
     - { role: php, tags: ['setup', 'config'] }
+    - { role: percona-server, tags: ['setup', 'config', 'security'] }

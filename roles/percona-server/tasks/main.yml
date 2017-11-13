@@ -1,0 +1,134 @@
+---
+- name: "Add Percona Server key"
+  apt_key:
+    keyserver: keys.gnupg.net
+    id: 8507EFA5
+  tags:
+    - setup
+
+- name: "Add Percona Server repository"
+  apt_repository:
+    repo: 'deb http://repo.percona.com/apt {{ ansible_distribution_release }} main'
+    state: present
+  tags:
+    - setup
+
+- name: "Pin Percona packages"
+  copy:
+    src: 00percona.pref
+    dest: /etc/apt/preferences.d/00percona.pref
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - setup
+
+# debconf-get-selections | grep percona
+- debconf:
+    name: "percona-server-server-{{ percona_version }}"
+    question: "{{ item }}"
+    value: "{{ percona_root_password }}"
+    vtype: 'password'
+  changed_when: false
+  with_items:
+    - 'percona-server-server/root_password'
+    - 'percona-server-server/root_password_again'
+  tags:
+    - setup
+
+- name: "Install Percona Server"
+  apt:
+    pkg: "percona-server-server-{{ percona_version }}"
+    state: present
+  tags:
+    - setup
+
+- name: "Install additional tools"
+  apt:
+    pkg: "{{ item }}"
+    state: present
+  with_items:
+    - percona-xtrabackup
+    - percona-toolkit
+  tags:
+    - setup
+
+- name: "Place Percona Server configuration file in place"
+  template:
+    src: mysqld.cnf.j2
+    dest: "{{ percona_conf_path }}"
+  notify: "restart Percona"
+  tags:
+    - config
+
+- name: "Add Python MySQL support"
+  apt:
+    pkg: "python-mysqldb"
+    state: present
+  tags:
+    - setup
+
+- name: "Configure root access"
+  template:
+    src: root.my.cnf.j2
+    dest: "{{ percona_root_path }}"
+    mode: 0600
+  tags:
+    - config
+
+- name: "Delete anonymous Percona user"
+  mysql_user:
+    user: ""
+    host: "{{ item }}"
+    state: "absent"
+  with_items:
+    - "127.0.0.1"
+    - "{{ ansible_fqdn }}"
+  tags:
+    - security
+
+- name: "Secure the Percona root user for * hosts"
+  mysql_user:
+    name: "root"
+    password: "{{ percona_root_password }}"
+    host: "{{ item }}"
+  with_items:
+    - "::1"
+    - "127.0.0.1"
+    - "localhost"
+    - "{{ ansible_fqdn }}"
+  tags:
+    - security
+
+- name: "Remove the MySQL test database"
+  mysql_db:
+    db: test
+    state: absent
+  notify: "restart Percona"
+  tags:
+    - security
+
+# ---
+- name: "Add required Percona databases"
+  mysql_db:
+    name: "{{ item.name }}"
+    state: present
+    encoding: "{{ item.encoding }}"
+  with_items:
+    - "{{ percona_databases }}"
+  when: percona_databases is defined
+  tags:
+    - config
+
+- name: "Add required Percona users"
+  mysql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    priv: "{{ item.priv }}"
+    host: "{{ item.host | default }}"
+    state: present
+  with_items:
+    - "{{ percona_users }}"
+  when: percona_users is defined
+  tags:
+    - config

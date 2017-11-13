@@ -1,0 +1,36 @@
+# {{ ansible_managed }}
+[mysql]
+
+port                           = {{ percona_mysql_port }}
+socket                         = {{ percona_mysql_socket }}
+
+[mysqld]
+
+# GENERAL #
+user                           = mysql
+default-storage-engine         = {{ percona_mysql_default_storage_engine }}
+socket                         = {{ percona_mysql_socket }}
+pid-file                       = {{ percona_mysql_pid }}
+
+server-id                      = 10
+
+# MyISAM #
+key-buffer-size                = 32M
+myisam-recover                 = FORCE,BACKUP
+
+# SAFETY #
+max-allowed-packet             = 16M
+max-connect-errors             = 1000000
+skip-name-resolve
+sql-mode                       = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_AUTO_VALUE_ON_ZERO,NO_ENGINE_SUBSTITUTION,NO_ZERO_DATE,NO_ZERO_IN_DATE,ONLY_FULL_GROUP_BY
+sysdate-is-now                 = 1
+innodb                         = FORCE
+
+# DATA STORAGE #
+datadir                        = {{ percona_mysql_data_dir }}
+tmpdir                         = /tmp
+
+# BINARY LOGGING #
+log-bin                        = /var/lib/mysql/mysql-bin
+expire-logs-days               = 14
+sync-binlog                    = 1

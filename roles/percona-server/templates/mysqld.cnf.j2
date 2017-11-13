@@ -1,0 +1,43 @@
+# {{ ansible_managed }}
+[mysqld]
+user   = mysql
+default-storage-engine         = {{ percona_mysql_default_storage_engine }}
+pid-file = {{ percona_mysql_pid }}
+socket   = {{ percona_mysql_socket }}
+port   = {{ percona_mysql_port }}
+basedir    = /usr
+datadir    = {{ percona_mysql_data_dir }}
+tmpdir   = /tmp
+lc-messages-dir  = /usr/share/mysql
+explicit_defaults_for_timestamp
+
+# LOGGING #
+log-error    = /var/log/mysql/error.log
+log-queries-not-using-indexes  = 1
+slow-query-log                 = 1
+slow-query-log-file            = /var/log/mysql/error-slow.log
+
+# Recommended in standard MySQL setup
+sql_mode=NO_ENGINE_SUBSTITUTION,STRICT_ALL_TABLES
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links=0
+
+# CACHES AND LIMITS #
+tmp-table-size                 = 32M
+max-heap-table-size            = 32M
+query-cache-type               = 0
+query-cache-size               = 0
+max-connections                = {{ percona_mysql_max_connections }}
+thread-cache-size              = 50
+open-files-limit               = 65535
+table-definition-cache         = 1024
+table-open-cache               = 2048
+
+# INNODB #
+innodb-flush-method            = O_DIRECT
+innodb-log-files-in-group      = 2
+innodb-log-file-size           = 64M
+innodb-flush-log-at-trx-commit = 1
+innodb-file-per-table          = 1
+innodb-buffer-pool-size        = {{ percona_mysql_innodb_buffer_pool_size }}
