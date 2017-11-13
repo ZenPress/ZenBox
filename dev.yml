@@ -1,4 +1,5 @@
 ---
-- hosts: nginx
+- hosts: web
   roles:
     - { role: nginx, tags: ['setup', 'config'] }
+    - { role: php, tags: ['setup', 'config'] }
