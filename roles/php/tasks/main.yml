@@ -1,0 +1,48 @@
+---
+# tasks file for ansible-role-php
+- name: Define php_packages
+  set_fact:
+    php_packages: "{{ php_minimal_packages | list + php_base_packages }}"
+  when: php_packages is not defined
+  tags:
+    - setup
+
+- name: Define php_packages with PHP-FPM
+  set_fact:
+    php_packages: "{{ php_packages | list + php_fpm_package }}"
+  when: php_enable_php_fpm
+  tags:
+    - setup
+
+- name: Define extra php_packages
+  set_fact:
+    php_packages: "{{ php_packages | list + php_packages_extra | list }}"
+  when: php_packages_extra is defined
+  tags:
+    - setup
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 86400
+  tags:
+    - setup
+
+- name: Install PHP packages
+  apt:
+    name: "{{ item }}"
+    state: "{{ php_packages_state }}"
+    install_recommends: "{{ php_install_recommends }}"
+  with_items: "{{ php_packages }}"
+  register: php_package_install
+  notify: "start PHP-FPM"
+  tags:
+    - setup
+    
+- include_tasks: settings-php.yml
+
+- include_tasks: settings-opcache.yml
+  when: php_opcache_enable == "1"
+
+- include_tasks: settings-php-fpm.yml
+  when: php_enable_php_fpm
