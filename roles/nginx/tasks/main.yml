@@ -9,31 +9,61 @@
 - name: "Add NGINX Mainline Repository"
   apt_repository:
     repo: "{{item}}"
-  register: nginx_repository
+    state: present
+  register: nginx_add_repository
   with_items:
-    - deb http://nginx.org/packages/{{nginx_repository}}/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
-    - deb-src http://nginx.org/packages/{{nginx_repository}}/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
-  when: ( nginx_repository == "mainline")
+    - deb http://nginx.org/packages/mainline/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+    - deb-src http://nginx.org/packages/mainline/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+  when: ( nginx_repository == "mainline" )
+  tags:
+    - setup
+
+- name: "Remove NGINX Mainline Repository"
+  apt_repository:
+    repo: "{{item}}"
+    state: absent
+  register: nginx_remove_repository
+  with_items:
+    - deb http://nginx.org/packages/mainline/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+    - deb-src http://nginx.org/packages/mainline/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+  when: ( nginx_repository != "mainline" )
   tags:
     - setup
 
 - name: "Add NGINX Stable Repository"
   apt_repository:
     repo: "{{item}}"
-  register: nginx_repository
+    state: present
+  register: nginx_add_repository
   with_items:
     - deb http://nginx.org/packages/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
     - deb-src http://nginx.org/packages/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
-  when: ( nginx_repository == "stable")
+  when: ( nginx_repository != "mainline" )
   tags:
     - setup
+
+- name: "Remove NGINX Stable Repository"
+  apt_repository:
+    repo: "{{item}}"
+    state: absent
+  register: nginx_add_repository
+  with_items:
+    - deb http://nginx.org/packages/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+    - deb-src http://nginx.org/packages/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+  when: ( nginx_repository == "mainline" )
+  tags:
+    - setup
+
+- name: "Update apt cache"
+  apt:
+    update_cache: true
+  when: ( nginx_add_repository or nginx_remove_repository )
 
 - name: "Install NGINX package"
   apt:
     name: "{{ nginx_package }}"
-    state: latest
-    update_cache: true
-    cache_valid_time: 86400
+    state: present
+    force: yes
   notify: "start NGINX"
   tags:
     - setup
