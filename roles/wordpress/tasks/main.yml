@@ -26,6 +26,33 @@
     group: "{{ server_unprivileged_group }}"
   become: yes
 
+- name: Ensure themes directory exists in /srv/www/[server_domain]/content
+  file:
+    state: directory
+    path: "/srv/www/{{ server_domain_name }}/content/themes"
+    mode: 0755
+    owner: "{{ server_unprivileged_user }}"
+    group: "{{ server_unprivileged_group }}"
+  become: yes
+
+- name: Ensure plugins directory exists in /srv/www/[server_domain]/content
+  file:
+    state: directory
+    path: "/srv/www/{{ server_domain_name }}/content/plugins"
+    mode: 0755
+    owner: "{{ server_unprivileged_user }}"
+    group: "{{ server_unprivileged_group }}"
+  become: yes
+
+- name: Ensure plugins-mu directory exists in /srv/www/[server_domain]/content
+  file:
+    state: directory
+    path: "/srv/www/{{ server_domain_name }}/content/plugins-mu"
+    mode: 0755
+    owner: "{{ server_unprivileged_user }}"
+    group: "{{ server_unprivileged_group }}"
+  become: yes
+
 - name: Check if WordPress is downloaded
   stat:
     path: "/srv/www/{{ server_domain_name }}/index.php"
