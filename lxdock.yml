@@ -8,8 +8,7 @@ image: ubuntu/xenial
 containers:
   - name: web
     hostnames:
-      - web.zenbox.dev
-
+      - box.zenpress.com.br
 provisioning:
   - type: ansible
     playbook: dev.yml

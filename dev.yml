@@ -2,13 +2,30 @@
 - hosts: web
   vars:
     percona_databases:
-      - name: zenbox
-        encoding: utf8
+      - name: "{{ wp_db_name }}"
+        encoding: "{{ wp_db_charset }}"
+        collation: "{{ wp_db_collate }}"
     percona_users:
-      - name: zenbox
-        password: zenbox
-        priv: 'zenbox.*:ALL'
+      - name: "{{ wp_db_user }}"
+        password: "{{ wp_db_password }}"
+        priv: '{{ wp_db_name }}.*:ALL'
+    zenbox_environment: development
+    server_domain_name: box.zenpress.com.br
+    nginx_user: ubuntu
+    nginx_group: ubuntu
+    php_fpm_listen_owner: ubuntu
+    php_fpm_listen_group: ubuntu
+  environment:
+    WP_DB_NAME: "{{ wp_db_name }}"
+    WP_DB_USER: "{{ wp_db_user }}"
+    WP_DB_PASSWORD: "{{ wp_db_password }}"
+    WP_DB_HOST: "{{ wp_db_host }}"
+    WP_DB_CHARSET: "{{ wp_db_charset }}"
+    WP_DB_COLLATE: "{{ wp_db_collate }}"
   roles:
+    - { role: users }
     - { role: nginx, tags: ['setup', 'config'] }
     - { role: php, tags: ['setup', 'config'] }
     - { role: percona-server, tags: ['setup', 'config', 'security'] }
+    - { role: wordpress }
+    - { role: wp-cli }
