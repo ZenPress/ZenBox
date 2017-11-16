@@ -50,10 +50,13 @@ php_fpm_pid: "/run/php/php7.0-fpm.pid"
 php_fpm_daemon: "php{{ php_version }}-fpm"
 
 # PHP-FPM Pool configuration
-php_fpm_pool_conf_path: "{{ php_fpm_conf_path }}/pool.d/www.conf"
+php_fpm_pool_conf_path: "{{ php_fpm_conf_path }}/pool.d"
 php_fpm_pool_user: www-data
 php_fpm_pool_group: www-data
 php_fpm_listen: "/run/php/php{{ php_version }}-fpm.sock"
+php_fpm_listen_owner: www-data
+php_fpm_listen_group: www-data
+php_fpm_listen_mode: "0660"
 php_fpm_pm: dynamic
 php_fpm_pm_max_children: 12 # default 5
 php_fpm_pm_start_servers: 4 # default 2

@@ -2,7 +2,7 @@
 ; Start a new pool named 'www'.
 ; the variable $pool can be used in any directive and will be replaced by the
 ; pool name ('www' here)
-[www]
+[{{ server_domain_name }}]
 
 ; Per pool prefix
 ; It only applies on the following directives:
@@ -21,8 +21,8 @@
 ; Unix user/group of processes
 ; Note: The user is mandatory. If the group is not set, the default user's group
 ;       will be used.
-user = {{ php_fpm_pool_user }}
-group = {{ php_fpm_pool_group }}
+user = {{ server_unprivileged_user }}
+group = {{ server_unprivileged_user }}
 
 ; The address on which to accept FastCGI requests.
 ; Valid syntaxes are:
@@ -45,9 +45,9 @@ listen = {{ php_fpm_listen }}
 ; BSD-derived systems allow connections regardless of permissions.
 ; Default Values: user and group are set as the running user
 ;                 mode is set to 0660
-listen.owner = {{ php_fpm_pool_user }}
-listen.group = {{ php_fpm_pool_group }}
-;listen.mode = 0660
+listen.owner = {{ php_fpm_listen_owner }}
+listen.group = {{ php_fpm_listen_group }}
+listen.mode = {{ php_fpm_listen_mode }}
 ; When POSIX Access Control Lists are supported you can set them using
 ; these options, value is a comma separated list of user/group names.
 ; When set, listen.owner and listen.group are ignored
@@ -251,7 +251,7 @@ pm.max_requests = {{ php_fpm_pm_max_requests }}
 
 ; The access log file
 ; Default: not set
-;access.log = log/$pool.access.log
+access.log = /var/log/$pool.access.log
 
 ; The access log format.
 ; The following syntax is allowed
@@ -315,7 +315,7 @@ pm.max_requests = {{ php_fpm_pm_max_requests }}
 ; The log file for slow requests
 ; Default Value: not set
 ; Note: slowlog is mandatory if request_slowlog_timeout is set
-;slowlog = log/$pool.log.slow
+slowlog = /var/log/$pool.log.slow
 
 ; The timeout for serving a single request after which a PHP backtrace will be
 ; dumped to the 'slowlog' file. A value of '0s' means 'off'.
