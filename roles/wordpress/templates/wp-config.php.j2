@@ -1,0 +1,67 @@
+<?php
+/** {{ ansible_managed }} */
+
+/**
+ * Custom WordPress configurations on "wp-config.php" file.
+ *
+ * This file has the following configurations: MySQL settings, Table Prefix, Secret Keys, WordPress Language, ABSPATH and more.
+ * For more information visit {@link https://codex.wordpress.org/Editing_wp-config.php Editing wp-config.php} Codex page.
+ * @package WordPress
+ */
+
+/* Development settings */
+ error_reporting(E_ALL); ini_set('display_errors', 1);
+ define( 'WP_DEBUG', true);
+
+
+/* MySQL settings */
+define( 'DB_NAME', '{{ wp_db_name }}' );
+define( 'DB_USER', '{{ wp_db_user }}' );
+define( 'DB_PASSWORD', '{{ wp_db_password }}' );
+define( 'DB_HOST', '{{ wp_db_host}}' );
+define( 'DB_CHARSET', '{{ wp_db_charset }}' );
+define( 'DB_COLLATE', '{{ wp_db_collate }}' );
+
+/* Authentication Unique Keys and Salts. */
+/* https://api.wordpress.org/secret-key/1.1/salt/ */
+{{ wp_salt.stdout }}
+
+
+/* MySQL database table prefix. */
+$table_prefix = 'wp_';
+
+// Define Site URL
+define( 'WP_SITEURL', 'http://' . $_SERVER['HTTP_HOST'] );
+
+// Define Home URL
+define( 'WP_HOME', 'http://' . $_SERVER['HTTP_HOST'] );
+
+// Define path & url for Content
+define( 'WP_CONTENT_DIR', dirname( __FILE__ ) . '/content' );
+define( 'WP_CONTENT_URL', WP_HOME . '/content' );
+
+// Set path to MU Plugins.
+define( 'WPMU_PLUGIN_DIR', WP_CONTENT_DIR . '/plugins-mu' );
+define( 'WPMU_PLUGIN_URL', WP_CONTENT_URL . '/plugins-mu' );
+
+/** A couple extra tweaks to help things run well with HTTPS. **/
+if (isset($_SERVER['HTTP_HOST'])) {
+   // HTTP is still the default scheme for now.
+   $scheme = 'http';
+   // If we have detected that the end use is HTTPS, make sure we pass that
+   // through here, so <\img> tags and the like don't generate mixed-mode
+   // content warnings.
+   if (isset($_SERVER['HTTP_USER_AGENT_HTTPS']) && $_SERVER['HTTP_USER_AGENT_HTTPS'] == 'ON') {
+       $scheme = 'https';
+   }
+   define('WP_HOME', $scheme . '://' . $_SERVER['HTTP_HOST']);
+   define('WP_SITEURL', $scheme . '://' . $_SERVER['HTTP_HOST']);
+}
+
+
+/* Absolute path to the WordPress directory. */
+if ( !defined('ABSPATH') )
+	define('ABSPATH', dirname(__FILE__) . '/');
+
+/* Sets up WordPress vars and included files. */
+require_once(ABSPATH . 'wp-settings.php');
