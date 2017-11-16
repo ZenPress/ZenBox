@@ -13,3 +13,5 @@ nginx_site_conf: no-default.conf.j2
 nginx_user: www-data
 nginx_group: "{{ nginx_user }}"
 nginx_worker_connections: 1024
+
+server_domain_name:
