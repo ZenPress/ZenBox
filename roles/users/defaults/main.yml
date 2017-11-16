@@ -1,0 +1,5 @@
+---
+  server_unprivileged_user: ubuntu
+  server_unprivileged_group: ubuntu
+  server_unprivileged_user_uid: 1000
+  server_unprivileged_group_gid: 1000

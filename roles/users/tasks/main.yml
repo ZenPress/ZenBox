@@ -1,0 +1,17 @@
+---
+  - name: Create unprivileged group
+    group:
+      name: "{{ server_unprivileged_group }}"
+      state: present
+      gid: "{{ server_unprivileged_group_gid }}"
+      
+  - name: Create unprivileged user
+    user:
+      name: "{{ server_unprivileged_user }}"
+      uid: "{{ server_unprivileged_user_uid }}"
+      group: "{{ server_unprivileged_group }}"
+      groups: "{{ item }}"
+      append: yes
+      state: present
+    with_items:
+      - www-data
