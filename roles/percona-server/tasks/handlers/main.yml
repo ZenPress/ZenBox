@@ -1,6 +1,0 @@
----
-
-- name: "restart Percona"
-  service:
-   name: mysql
-   state: restarted
