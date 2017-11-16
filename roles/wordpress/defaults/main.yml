@@ -7,3 +7,4 @@ wp_db_collate: utf8_general_ci
 wp_db_host: localhost
 wp_version: "4.8.3"
 wp_sha1sum: "8efc0b9f6146e143ed419b5419d7bb8400a696fc"
+wp_debug: true
