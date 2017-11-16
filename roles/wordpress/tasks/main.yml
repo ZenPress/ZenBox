@@ -90,6 +90,15 @@
     mode: 0600
   become: yes
 
+- name: Register default theme directory
+  template:
+    src: register-theme-directory.php.j2
+    dest: "/srv/www/{{ server_domain_name }}/content/plugins-mu/register-theme-directory.php"
+    owner: "{{ server_unprivileged_user }}"
+    group: "{{ server_unprivileged_group }}"
+    mode: 0755
+  become: yes
+
 - name: Ensure NGINX site config is in place
   template:
     src: site.conf.j2
