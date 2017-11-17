@@ -17,8 +17,13 @@ server {
   }
 
   location / {
-      try_files $uri $uri/ /index.php?$args;
+      try_files $uri $uri/ /index.php?q=$uri&$args;
   }
+
+  location ~ ^/content/(.*)$ {
+		alias /srv/www/{{ server_domain_name}}/content/$1;
+		expires 30d;
+	}
 
   location ~ \.php$ {
     include        /etc/nginx/fastcgi_params;
