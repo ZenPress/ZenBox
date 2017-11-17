@@ -8,13 +8,22 @@ percona_conf_path: /etc/mysql/percona-server.conf.d/mysqld.cnf
 percona_root_path: /root/.my.cnf
 
 # databases:
-percona_databases: []
+percona_databases:
+  - name: "{{ wp_db_name }}"
+    encoding: "{{ wp_db_charset }}"
+    collation: "{{ wp_db_collate }}"
+
 #percona_databases:
 #  - name: zen
 #    encoding: utf8
 
 # users:
-percona_users: []
+percona_users:
+  - name: "{{ wp_db_user }}"
+    password: "{{ wp_db_password }}"
+    host: "{{ wp_db_host }}"
+    priv: "{{ wp_db_name }}.*:ALL"
+
 #percona_users:
 #  - name: zen
 #  password: zen

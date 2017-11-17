@@ -116,7 +116,7 @@
     encoding: "{{ item.encoding }}"
   with_items:
     - "{{ percona_databases }}"
-  when: percona_databases is defined
+  when: ( percona_databases is defined ) and ( percona_server_create_databases is defined )
   tags:
     - config
 
@@ -129,6 +129,6 @@
     state: present
   with_items:
     - "{{ percona_users }}"
-  when: percona_users is defined
+  when: ( percona_users is defined ) and ( percona_server_create_users is defined )
   tags:
     - config

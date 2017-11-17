@@ -1,0 +1,43 @@
+---
+- hosts: web
+  vars:
+    # Available options for Percona Server, started with percona_server_:
+    # create_databases: if true, create databases
+    # create_users: if true, create database users
+    percona_server_create_databases: true
+    percona_server_create_users: true
+
+    # Available options for WordPress, started with wp_:
+    # db_host: Database IP, default to localhost
+    # db_name: Database name, default to zenbox
+    # db_charset: Database encoding charset, default to utf8
+    # db_collate: Database collation, default to utf8_general_ci
+    # db_user: Database user, default to zenroot
+    # db_password: Database user password, default to zenpassword
+    wp_db_host: localhost
+    wp_db_name: zenbox
+    wp_db_charset: utf8
+    wp_db_collate: utf8_general_ci
+    wp_db_user: zenroot
+    wp_db_password: zenpassword
+
+    zenbox_environment: development
+    server_domain_name: box.zenpress.com.br
+    nginx_user: ubuntu
+    nginx_group: ubuntu
+    php_fpm_listen_owner: ubuntu
+    php_fpm_listen_group: ubuntu
+  environment:
+    WP_DB_NAME: "{{ wp_db_name }}"
+    WP_DB_USER: "{{ wp_db_user }}"
+    WP_DB_PASSWORD: "{{ wp_db_password }}"
+    WP_DB_HOST: "{{ wp_db_host }}"
+    WP_DB_CHARSET: "{{ wp_db_charset }}"
+    WP_DB_COLLATE: "{{ wp_db_collate }}"
+  roles:
+    - { role: users }
+    - { role: nginx, tags: ['setup', 'config'] }
+    - { role: php, tags: ['setup', 'config'] }
+    - { role: percona-server, tags: ['setup', 'config', 'security'] }
+    - { role: wordpress }
+    - { role: wp-cli }
