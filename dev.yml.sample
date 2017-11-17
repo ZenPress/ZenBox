@@ -1,6 +1,15 @@
 ---
-- hosts: web
+- hosts: zenbox
   vars:
+    # Available options for box setup, started with server_:
+    # environment: set type of environment (dev, prod | development, production)
+    # user | group: unprivileged user to own WordPress files and php-fpm pools
+    # domain_name: server domain name configured in /etc/hosts
+    server_environment: development
+    server_unprivileged_user: nobody
+    server_unprivileged_group: nogroup
+    server_domain_name: zenbox.zenpress.com.br
+
     # Available options for Percona Server, started with percona_server_:
     # create_databases: if true, create databases
     # create_users: if true, create database users
@@ -21,19 +30,6 @@
     wp_db_user: zenroot
     wp_db_password: zenpassword
 
-    zenbox_environment: development
-    server_domain_name: box.zenpress.com.br
-    nginx_user: ubuntu
-    nginx_group: ubuntu
-    php_fpm_listen_owner: ubuntu
-    php_fpm_listen_group: ubuntu
-  environment:
-    WP_DB_NAME: "{{ wp_db_name }}"
-    WP_DB_USER: "{{ wp_db_user }}"
-    WP_DB_PASSWORD: "{{ wp_db_password }}"
-    WP_DB_HOST: "{{ wp_db_host }}"
-    WP_DB_CHARSET: "{{ wp_db_charset }}"
-    WP_DB_COLLATE: "{{ wp_db_collate }}"
   roles:
     - { role: users }
     - { role: nginx, tags: ['setup', 'config'] }
