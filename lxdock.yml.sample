@@ -1,0 +1,21 @@
+# This is a basic configuration file for LXDock.
+# All configuration is done through this YML file that should be placed at the root of your project.
+# The file define a basic LXDock project containing a single container with highlights regarding
+# some other useful options.
+name: zenbox
+image: ubuntu/xenial
+
+containers:
+  - name: zenbox
+    hostnames:
+      - box.zenpress.com.br
+provisioning:
+  - type: ansible
+    playbook: dev.yml.sample
+
+# A common need is to access your project folder in your containers.
+# To do this you can use the "shares" option:
+shares:
+#   - source: .
+#     dest: /myshare
+#     set_host_acl: false
